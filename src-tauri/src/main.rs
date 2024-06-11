@@ -3,13 +3,20 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn add_todo(title: &str) -> String {
+    // TODOの追加処理
+    format!("タスクを追加しました : {}", title)
+}
+
+#[tauri::command]
+fn remove_todo() -> String {
+    // TODOの削除処理
+    format!("タスクを削除しました")
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![add_todo, remove_todo])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

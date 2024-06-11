@@ -6,6 +6,8 @@
             <button>追加</button>
         </form>
 
+        <p>{{ resultMsg }}</p>
+
         <ul>
             <li v-for="(todo, index) in todos">
                 {{ todo.title }}
@@ -17,42 +19,36 @@
 
 <script>
 import { invoke } from "@tauri-apps/api/tauri";
+import { ref } from "vue";
 
 export default {
     name: "TodoList",
     components: {},
     data() {
         return {
-            newTodo: "",
-            todos: [
+            newTodo: ref(""),
+            todos: ref([
                 {
                     title: "Rustを勉強する"
                 },
                 {
                     title: "PHPを勉強する"
                 },
-            ],
+            ]),
+            resultMsg: ref(""),
         };
     },
     methods: {
         async addTodo() {
             if (this.newTodo.trim() !== "") {
-                this.todos.push({
-                    title: this.newTodo
-                })
-                console.log(this.todos);
-                // invoke("add_todo", { title: this.newTodo.trim() }).then((response) => {
-                //     console.log(response);
-                // });
+                this.todos.push({ title: this.newTodo });
+                this.resultMsg = await invoke("add_todo", { title: this.newTodo.trim() });
                 this.newTodo = "";
             }
         },
-        removeTodo(index) {
+        async removeTodo(index) {
             this.todos.splice(index, 1);
-            // invoke("remove_todo", index).then((response) => {
-            //     console.log(response);
-            // });
-            console.log(this.todos);
+            this.resultMsg = await invoke("remove_todo");
         }
     },
 }
